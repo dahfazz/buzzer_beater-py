@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NBA Night Recap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+  <h1>Scores</h1>
+  <ol>
+    {% for game in games %}
+    <li>{{game.away}} @ {{game.home}} | {{game.deltaQT3}}pts</li>
+    {% endfor %}
+  </ol>
+
+  <h1>Stats Leaders</h1>
+
+  <h2>Points</h2>
+  <ol>
+    {% for player in statLeaders.scorers %}
+    <li>{{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) | {{player.statistics.points}}
+      pts</li>
+    {% endfor %}
+  </ol>
+
+  <h2>Rebounders</h2>
+  <ol>
+    {% for player in statLeaders.rebounders %}
+    <li>{{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) |
+      {{player.statistics.reboundsTotal}}</li>
+    {% endfor %}
+  </ol>
+
+  <h2>Assists</h2>
+  <ol>
+    {% for player in statLeaders.assisters %}
+    <li>{{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) | {{player.statistics.assists}}
+    </li>
+    {% endfor %}
+  </ol>
+
+  <h2>Snipers</h2>
+  <ol>
+    {% for player in statLeaders.snipers %}
+    <li>{{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) |
+      {{player.statistics.threePointersMade}}/{{player.statistics.threePointersAttempted}}</li>
+    {% endfor %}
+  </ol>
+
+
+
+
+
+
+</body>
+
+</html>

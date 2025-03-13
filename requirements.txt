@@ -1,0 +1,5 @@
+# List your project dependencies here, one per line.
+
+nba_api==1.5.2
+fastapi[standard]==0.115.11
+pydantic>=2.7.0,<3.0.0
