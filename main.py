@@ -1,16 +1,52 @@
 import os
+import requests
+import urllib.request
+
 from fastapi import FastAPI, Request
 from datetime import date, timedelta
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from nba_api.stats.endpoints import scoreboardv2
-from nba_api.stats.endpoints import boxscoretraditionalv3
+from nba_api.stats.endpoints import scoreboardv2, leaguestandingsv3, boxscoretraditionalv3
 from nba_api.stats.library.parameters import LeagueID
 from concurrent.futures import ThreadPoolExecutor
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + os.getenv('GEMINI_KEY') 
+# myobj = {"contents": [{
+#     "parts":[{"text": "Explain how AI works"}]
+#     }]
+#    }
+
+# x = requests.post(url, json = myobj)
+
+# print(x.text[""])
+
+# from google import genai
+
+# client = genai.Client(api_key=os.getenv('GEMINI_KEY'))
+
+# response = client.models.generate_content(
+#     model="gemini-2.0-pro-exp-02-05",
+#     contents=["Sum up all 13th March 2025 NBA games."])
+# print(response.text)
+
 
 MAX_STATS = 10
 MAX_STATS_EXTENDED = 20
+
+def isEast(n):
+    return n[6] == 'East'
+def isWest(n):
+    return n[6] == 'West'
+
+standings = leaguestandingsv3.LeagueStandingsV3().get_dict()
+standSets = standings['resultSets'][0]['rowSet']
+
+eastStandings = list(filter(isEast, standSets))
+westStandings = list(filter(isWest, standSets))
 
 def get_scorers():
 
@@ -67,6 +103,10 @@ templates = Jinja2Templates(directory="templates")
 
 statLeaders = get_scorers()
 
+# @app.get("/check", response_class=JSONResponse)
+# async def check():
+#     return JSONResponse(content=check.get_status())
+
 @app.get("/", response_class=HTMLResponse)
 async def read_games(request: Request):
     today = date.today()
@@ -95,5 +135,7 @@ async def read_games(request: Request):
 
     return templates.TemplateResponse(request=request, name="index.html", context={
         "games": games,
-        "statLeaders": statLeaders
+        "statLeaders": statLeaders,
+        "eastStandings": eastStandings,
+        "westStandings": westStandings,
     })

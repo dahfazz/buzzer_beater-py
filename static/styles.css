@@ -1,11 +1,59 @@
+.d-flex {
+  display: flex;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.capital {
+  text-transform: uppercase;
+}
+
+.win {
+  color: green;
+}
+
+.loss {
+  color: red;
+}
+
 body {
   font-family: "Open Sans", sans-serif;
   font-size: 14px;
+  background-color: #000;
+  color: #ccc;
 }
 
-ol {
+ol,
+ul {
+  padding-left: 16px;
+
   & li {
     padding: 8px;
-    border: 1px solid #eee;
   }
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  text-align: left;
+}
+
+td {
+  vertical-align: top;
+}
+
+#standings {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.highlighted {
+  font-weight: bold;
+  color: white;
 }

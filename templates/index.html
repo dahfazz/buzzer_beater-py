@@ -13,51 +13,85 @@
 </head>
 
 <body>
-  <h1>Scores</h1>
-  <ol>
-    {% for game in games %}
-    <li>{{game.away}} @ {{game.home}} | {{game.deltaQT3}}pts</li>
-    {% endfor %}
-  </ol>
+  <table>
+    <thead>
+      <tr>
+        <th>Scores</th>
+        <th>Points</th>
+        <th>East</th>
+        <th>West</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <ol>
+            {% for game in games %}
+            {% if game.deltaQT3 < 10 %} <li class="highlighted">
+              {% else %}
+              <li>
+                {% endif %}
+                {{game.away}} @ {{game.home}} | {{game.deltaQT3}}pts</li>
+              {% endfor %}
+          </ol>
+        </td>
+        <td>
+          <ol>
+            {% for player in statLeaders.scorers %}
+            {% if player.statistics.points > 29 %} <li class="highlighted">
+              {% else %}
+            <li>
+              {% endif %}
+              {{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) | {{player.statistics.points}}
+              pts</li>
+            {% endfor %}
+          </ol>
+        </td>
+        <td>
+          <ol>
+            {% for team in eastStandings %}
+            {% if loop.index < 7 %} <li class="highlighted capital">
+              {% else %}
+              {% if loop.index <= 10 %} <li class="highlighted capital">
+                {% else %}
+                <li>
+                  {% endif %}
+                  {% endif %}
+                  {{team[3]}} | {{team[38]}} |
 
-  <h1>Stats Leaders</h1>
+                  {% if team[37][0] == 'W' %}
+                  <span class="win">{{team[37]}}</span>
+                  {% else %}
+                  <span class="loss">{{team[37]}}</span>
+                  {% endif %} | {{team[20]}}
+                </li>
+                {% endfor %}
+          </ol>
+        </td>
+        <td>
+          <ol>
+            {% for team in westStandings %}
+            {% if loop.index < 7 %} <li class="highlighted capital">
+              {% else %}
+              {% if loop.index <= 10 %} <li class="highlighted capital">
+                {% else %}
+                <li>
+                  {% endif %}
+                  {% endif %}
+                  {{team[3]}} | {{team[38]}} |
 
-  <h2>Points</h2>
-  <ol>
-    {% for player in statLeaders.scorers %}
-    <li>{{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) | {{player.statistics.points}}
-      pts</li>
-    {% endfor %}
-  </ol>
-
-  <h2>Rebounders</h2>
-  <ol>
-    {% for player in statLeaders.rebounders %}
-    <li>{{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) |
-      {{player.statistics.reboundsTotal}}</li>
-    {% endfor %}
-  </ol>
-
-  <h2>Assists</h2>
-  <ol>
-    {% for player in statLeaders.assisters %}
-    <li>{{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) | {{player.statistics.assists}}
-    </li>
-    {% endfor %}
-  </ol>
-
-  <h2>Snipers</h2>
-  <ol>
-    {% for player in statLeaders.snipers %}
-    <li>{{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) |
-      {{player.statistics.threePointersMade}}/{{player.statistics.threePointersAttempted}}</li>
-    {% endfor %}
-  </ol>
-
-
-
-
-
+                  {% if team[37][0] == 'W' %}
+                  <span class="win">{{team[37]}}</span>
+                  {% else %}
+                  <span class="loss">{{team[37]}}</span>
+                  {% endif %} | {{team[20]}}
+                </li>
+                {% endfor %}
+          </ol>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
 </body>
 
