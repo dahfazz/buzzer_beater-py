@@ -14,39 +14,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + os.getenv('GEMINI_KEY') 
-# myobj = {"contents": [{
-#     "parts":[{"text": "Explain how AI works"}]
-#     }]
-#    }
-
-# x = requests.post(url, json = myobj)
-
-# print(x.text[""])
-
-# from google import genai
-
-# client = genai.Client(api_key=os.getenv('GEMINI_KEY'))
-
-# response = client.models.generate_content(
-#     model="gemini-2.0-pro-exp-02-05",
-#     contents=["Sum up all 13th March 2025 NBA games."])
-# print(response.text)
-
-
 MAX_STATS = 10
 MAX_STATS_EXTENDED = 20
 
 def isEast(n):
     return n[6] == 'East'
+
 def isWest(n):
     return n[6] == 'West'
-
-standings = leaguestandingsv3.LeagueStandingsV3().get_dict()
-standSets = standings['resultSets'][0]['rowSet']
-
-eastStandings = list(filter(isEast, standSets))
-westStandings = list(filter(isWest, standSets))
 
 def get_scorers():
 
@@ -84,28 +59,44 @@ def get_scorers():
     teamTricode = boxscore["teamTricode"]
     for player in boxscore['players']:
       player["teamTricode"] = teamTricode
+
+      astPerf = int(player['statistics']['assists']) + int(player['statistics']['points'])
+      rebPerf = int(player['statistics']['reboundsTotal']) + int(player['statistics']['points'])
+      player["perf"] = astPerf if astPerf > rebPerf else rebPerf
+      player["perfLabel"] = "ASTPTS" if astPerf > rebPerf else "REBPTS"
+
       stats.append(player)
+
+
 
     rebounders = sorted(stats, key=lambda player: player['statistics']['reboundsTotal'], reverse=True)[:MAX_STATS]
 
   return {
+     "performers": sorted(stats, key=lambda player: player['perf'], reverse=True)[:MAX_STATS_EXTENDED],
      "scorers": sorted(stats, key=lambda player: player['statistics']['points'], reverse=True)[:MAX_STATS_EXTENDED],
      "rebounders": rebounders,
      "assisters": sorted(stats, key=lambda player: player['statistics']['assists'], reverse=True)[:MAX_STATS],
      "snipers": sorted(stats, key=lambda player: player['statistics']['threePointersPercentage'], reverse=True)[:MAX_STATS],
   }
 
-app = FastAPI(title="NBA Night Recap", description="Recap of the NBA games of the night", version="0.1")
+def get_standings():
+    standings = leaguestandingsv3.LeagueStandingsV3().get_dict()
+    standSets = standings['resultSets'][0]['rowSet']
+
+    pos_series = sorted(list(filter(lambda team: int(team[36]) >= 0, standSets)), key=lambda team: team[37], reverse=True)
+    neg_series = sorted(list(filter(lambda team: int(team[36]) < 0, standSets)), key=lambda team: team[37], reverse=False)
+
+    return {
+        "eastStandings": list(filter(isEast, standSets)),
+        "westStandings": list(filter(isWest, standSets)),
+        "hots": pos_series + neg_series,
+    }
+
+app = FastAPI(title="NBA Night Recap", version="0.1")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
-
-statLeaders = get_scorers()
-
-# @app.get("/check", response_class=JSONResponse)
-# async def check():
-#     return JSONResponse(content=check.get_status())
 
 @app.get("/", response_class=HTMLResponse)
 async def read_games(request: Request):
@@ -135,7 +126,8 @@ async def read_games(request: Request):
 
     return templates.TemplateResponse(request=request, name="index.html", context={
         "games": games,
-        "statLeaders": statLeaders,
-        "eastStandings": eastStandings,
-        "westStandings": westStandings,
+        "statLeaders": get_scorers(),
+        "eastStandings": get_standings()["eastStandings"],
+        "westStandings": get_standings()["westStandings"],
+        "hots": get_standings()["hots"],
     })

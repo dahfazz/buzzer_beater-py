@@ -46,12 +46,12 @@ td {
   vertical-align: top;
 }
 
-#standings {
+/* #standings {
   position: fixed;
   right: 0;
   top: 0;
   bottom: 0;
-}
+} */
 
 .highlighted {
   font-weight: bold;

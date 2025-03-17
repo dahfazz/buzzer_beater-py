@@ -18,8 +18,10 @@
       <tr>
         <th>Scores</th>
         <th>Points</th>
+        <th>Plqyoffs</th>
         <th>East</th>
         <th>West</th>
+        <th>Series</th>
       </tr>
     </thead>
     <tbody>
@@ -37,6 +39,20 @@
         </td>
         <td>
           <ol>
+            {% for player in statLeaders.performers %}
+            <li>
+              <img width="48" src="https://cdn.nba.com/headshots/nba/latest/260x190/{{player.personId}}.png" alt="">
+              {% if player.perfLabel == "ASTPTS" %}
+              {{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) | {{player.statistics.points}} PTS -
+              {{player.statistics.assists}} AST - {{player.statistics.reboundsTotal}} RBD
+            </li>
+            {% else %}
+            {{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) | {{player.statistics.points}} PTS -
+            {{player.statistics.reboundsTotal}} RBD - {{player.statistics.assists}} AST</li>
+            {% endif %}
+            {% endfor %}
+          </ol>
+          <!-- <ol>
             {% for player in statLeaders.scorers %}
             {% if player.statistics.points > 29 %} <li class="highlighted">
               {% else %}
@@ -45,7 +61,64 @@
               {{player.firstName}} {{player.familyName}} ({{player.teamTricode}}) | {{player.statistics.points}}
               pts</li>
             {% endfor %}
-          </ol>
+          </ol> -->
+        </td>
+        <td>
+          <ul>
+            <li>
+              <div>1. {{eastStandings[0][4]}}</div>
+              <div>-</div>
+            </li>
+            <li>
+              <div>2. {{eastStandings[1][4]}}</div>
+              <div>-</div>
+            </li>
+            <li>
+              <div>3. {{eastStandings[2][4]}}</div>
+              <div>6. {{eastStandings[5][4]}}</div>
+            </li>
+            <li>
+              <div>4. {{eastStandings[3][4]}}</div>
+              <div>5. {{eastStandings[4][4]}}</div>
+            </li>
+            <li>Play-In</li>
+            <li>
+              <div>7. {{eastStandings[6][4]}}</div>
+              <div>8. {{eastStandings[7][4]}}</div>
+            </li>
+            <li>
+              <div>9. {{eastStandings[8][4]}}</div>
+              <div>10. {{eastStandings[9][4]}}</div>
+            </li>
+          </ul>
+          <hr>
+          <ul>
+            <li>
+              <div>1. {{westStandings[0][4]}}</div>
+              <div>-</div>
+            </li>
+            <li>
+              <div>2. {{westStandings[1][4]}}</div>
+              <div>-</div>
+            </li>
+            <li>
+              <div>3. {{westStandings[2][4]}}</div>
+              <div>6. {{westStandings[5][4]}}</div>
+            </li>
+            <li>
+              <div>4. {{westStandings[3][4]}}</div>
+              <div>5. {{westStandings[4][4]}}</div>
+            </li>
+            <li>Play-In</li>
+            <li>
+              <div>7. {{westStandings[6][4]}}</div>
+              <div>8. {{westStandings[7][4]}}</div>
+            </li>
+            <li>
+              <div>9. {{westStandings[8][4]}}</div>
+              <div>10. {{westStandings[9][4]}}</div>
+            </li>
+          </ul>
         </td>
         <td>
           <ol>
@@ -55,9 +128,10 @@
               {% if loop.index <= 10 %} <li class="highlighted capital">
                 {% else %}
                 <li>
+                  <img width="48" src="https://cdn.nba.com/logos/nba/{{team[2]}}/global/L/logo.svg" alt="">
                   {% endif %}
                   {% endif %}
-                  {{team[3]}} | {{team[38]}} |
+                  {{team[4]}} | {{team[38]}} |
 
                   {% if team[37][0] == 'W' %}
                   <span class="win">{{team[37]}}</span>
@@ -78,13 +152,34 @@
                 <li>
                   {% endif %}
                   {% endif %}
-                  {{team[3]}} | {{team[38]}} |
+                  {{team[4]}} | {{team[38]}} |
 
                   {% if team[37][0] == 'W' %}
                   <span class="win">{{team[37]}}</span>
                   {% else %}
                   <span class="loss">{{team[37]}}</span>
                   {% endif %} | {{team[20]}}
+                </li>
+                {% endfor %}
+          </ol>
+        </td>
+        <td>
+          <ol>
+            {% for team in hots %}
+            {% if loop.index < 7 %} <li class="highlighted capital">
+              {% else %}
+              {% if loop.index <= 10 %} <li class="highlighted capital">
+                {% else %}
+                <li>
+                  {% endif %}
+                  {% endif %}
+                  {{team[4]}} |
+
+                  {% if team[37][0] == 'W' %}
+                  <span class="win">{{team[37]}}</span>
+                  {% else %}
+                  <span class="loss">{{team[37]}}</span>
+                  {% endif %}
                 </li>
                 {% endfor %}
           </ol>
